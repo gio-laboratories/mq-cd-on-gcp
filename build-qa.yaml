@@ -1,0 +1,42 @@
+steps:
+- name: gcr.io/k8s-skaffold/skaffold
+  entrypoint: /bin/bash
+  args:
+    - -c
+    - |
+      skaffold build --interactive=false --file-output=/workspace/artifacts.json --default-repo=europe-docker.pkg.dev/$PROJECT_ID/cloudbuilds --push=true
+      docker image inspect europe-docker.pkg.dev/$PROJECT_ID/cloudbuilds/cdongcp-app:${SHORT_SHA} --format '{{index .RepoDigests 0}}' > image-digest.txt &&
+      cat image-digest.txt
+  id: skaffold-build
+- name: gcr.io/$PROJECT_ID/kritis-signer
+  entrypoint: /bin/bash
+  args:
+  - -c
+  - |
+    /kritis/signer \
+    -v=10 \
+    -alsologtostderr \
+    -image=$(/bin/cat image-digest.txt) \
+    -policy=vulnz-signing-policy.yaml \
+    -kms_key_name=${_KMS_KEY_NAME} \
+    -kms_digest_alg=${_KMS_DIGEST_ALG} \
+    -note_name=${_NOTE_NAME}
+  waitFor: ['skaffold-build']
+  id: vuln-scanner
+- name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: gcloud
+  args:
+    [
+      "deploy", "releases", "create", "cdongcp-rel",
+      "--delivery-pipeline", "cd-on-gcp-pipeline",
+      "--region", "europe-west1",
+      "--annotations", "commitId=${REVISION_ID}",
+      "--build-artifacts", "/workspace/artifacts.json"
+    ]
+  waitFor: ['vuln-scanner']
+images:
+- europe-docker.pkg.dev/$PROJECT_ID/cloudbuilds/cdongcp-app:${SHORT_SHA}
+options:
+  requestedVerifyOption: VERIFIED
+
+
