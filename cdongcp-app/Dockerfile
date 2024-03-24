@@ -12,11 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.21-alpine3.18 as builder
+FROM golang:1.12.9-alpine3.10 as builder
 COPY app.go .
-RUN go env -w GO111MODULE=auto
 RUN go build -o /app .
 
-FROM alpine:3.18
+FROM alpine:3.10
 CMD ["./app"]
 COPY --from=builder /app .
