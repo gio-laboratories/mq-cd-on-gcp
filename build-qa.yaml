@@ -45,7 +45,7 @@ steps:
     printf "\n\nView details in Cloud Build (permission required) https://console.cloud.google.com/cloud-build/builds/$BUILD_ID?project=$PROJECT_ID" | tee -a mergerequest-release-notes.md
 
     cat mergerequest-release-notes.md | friendly-cicd-helper gitlab-comment --project $_GITLAB_PROJECT --mergerequest $$(cat /workspace/gitlab_merge_request_iid)
-    secretEnv: ['GITLAB_TOKEN']
+  secretEnv: ['GITLAB_TOKEN']
 - name: gcr.io/k8s-skaffold/skaffold
   entrypoint: /bin/bash
   args:
