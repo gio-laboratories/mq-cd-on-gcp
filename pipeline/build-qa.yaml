@@ -62,7 +62,7 @@ steps:
     - '-c'
     - |
       MERGE_REQUEST_IID=$$(cat /workspace/gitlab_merge_request_iid)
-      gcloud deploy releases create ledgerwriter-${SHORT_SHA} --delivery-pipeline genai-sw-delivery \
+      gcloud deploy releases create cdongcp--${SHORT_SHA} --delivery-pipeline cd-on-gcp-pipeline \
           --region europe-west1 --annotations "commitId=${REVISION_ID},gitlab_mr=$$MERGE_REQUEST_IID" --build-artifacts /workspace/artifacts.json
   waitFor: ['Scan the image for vulnerabilities']
 
