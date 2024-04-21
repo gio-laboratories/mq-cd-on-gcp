@@ -1,10 +1,11 @@
 steps:
-- name: gcr.io/google.com/cloudsdktool/cloud-sdk
-  entrypoint: gcloud
+- id: Promote most recent release to production
+  name: gcr.io/cloud-builders/gcloud
+  entrypoint: sh
   args:
-    [
-       "deploy", "releases", "promote", "--delivery-pipeline",
-       "cd-on-gcp-pipeline", "--release", "cdongcp-rel", 
-       "--region", "europe-west1"
-    ]
-
+    - -c
+    - |
+      MOST_RECENT_RELEASE=$$(gcloud deploy releases list --delivery-pipeline genai-sw-delivery --region europe-west1 --format="value(name)" --limit 1)
+      MERGE_REQUEST_IID=$$(gcloud deploy releases list --delivery-pipeline genai-sw-delivery --region europe-west1 --format="value(annotations.gitlab_mr)" --limit 1)
+      echo "$$MERGE_REQUEST_IID" > /workspace/gitlab_merge_request_iid
+      gcloud deploy releases promote --delivery-pipeline genai-sw-delivery --release $${MOST_RECENT_RELEASE} --region europe-west1
