@@ -5,7 +5,7 @@ steps:
   args:
     - -c
     - |
-      MOST_RECENT_RELEASE=$$(gcloud deploy releases list --delivery-pipeline genai-sw-delivery --region europe-west1 --format="value(name)" --limit 1)
-      MERGE_REQUEST_IID=$$(gcloud deploy releases list --delivery-pipeline genai-sw-delivery --region europe-west1 --format="value(annotations.gitlab_mr)" --limit 1)
+      MOST_RECENT_RELEASE=$$(gcloud deploy releases list --delivery-pipeline cd-on-gcp-pipeline --region europe-west1 --format="value(name)" --limit 1)
+      MERGE_REQUEST_IID=$$(gcloud deploy releases list --delivery-pipeline cd-on-gcp-pipeline --region europe-west1 --format="value(annotations.gitlab_mr)" --limit 1)
       echo "$$MERGE_REQUEST_IID" > /workspace/gitlab_merge_request_iid
       gcloud deploy releases promote --delivery-pipeline genai-sw-delivery --release $${MOST_RECENT_RELEASE} --region europe-west1
