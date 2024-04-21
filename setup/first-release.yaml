@@ -4,7 +4,7 @@ steps:
   args:
     - -c
     - |
-      skaffold build -f skaffold-first.yaml --interactive=false --file-output=/workspace/artifacts.json --default-repo=europe-docker.pkg.dev/$PROJECT_ID/cloudbuilds --push=true
+      skaffold build -f setup/skaffold-first.yaml --interactive=false --file-output=/workspace/artifacts.json --default-repo=europe-docker.pkg.dev/$PROJECT_ID/cloudbuilds --push=true
       docker image inspect europe-docker.pkg.dev/$PROJECT_ID/cloudbuilds/cdongcp-app --format '{{index .RepoDigests 0}}' > image-digest.txt &&
       cat image-digest.txt
   id: skaffold-build
@@ -17,7 +17,7 @@ steps:
     -v=10 \
     -alsologtostderr \
     -image=$(/bin/cat image-digest.txt) \
-    -policy=vulnz-signing-policy.yaml \
+    -policy=pipeline/vulnz-signing-policy.yaml \
     -kms_key_name=${_KMS_KEY_NAME} \
     -kms_digest_alg=${_KMS_DIGEST_ALG} \
     -note_name=${_NOTE_NAME}
