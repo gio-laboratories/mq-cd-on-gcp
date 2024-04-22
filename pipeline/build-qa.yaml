@@ -10,7 +10,7 @@ steps:
       cat /workspace/diff.txt
 
 - id: Use Vertex AI to provide automated Release Notes
-  name: 'europe-west1-docker.pkg.dev/$PROJECT_ID/tools/friendly-cicd-helper'
+  name: 'europe-west1-docker.pkg.dev/$PROJECT_ID/default/friendly-cicd-helper'
   entrypoint: sh
   args:
   - -c
