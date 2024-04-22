@@ -8,6 +8,7 @@ steps:
       git fetch origin
       git diff origin/main --output /workspace/diff.txt
       cat /workspace/diff.txt
+
 - id: Use Vertex AI to provide automated Release Notes
   name: 'europe-west1-docker.pkg.dev/$PROJECT_ID/default/friendly-cicd-helper'
   entrypoint: sh
@@ -34,6 +35,7 @@ steps:
       skaffold build --interactive=false --file-output=/workspace/artifacts.json --default-repo=europe-docker.pkg.dev/$PROJECT_ID/cloudbuilds --push=true
       docker image inspect europe-docker.pkg.dev/$PROJECT_ID/cloudbuilds/cdongcp-app:${SHORT_SHA} --format '{{index .RepoDigests 0}}' > image-digest.txt &&
       cat image-digest.txt
+
 - name: gcr.io/$PROJECT_ID/kritis-signer
   id: Scan the image for vulnerabilities
   entrypoint: /bin/bash
@@ -49,6 +51,7 @@ steps:
     -kms_digest_alg=${_KMS_DIGEST_ALG} \
     -note_name=${_NOTE_NAME}
   waitFor: ['Build the image with Skaffold']
+
 - id: Create a release in Cloud Deploy and rollout to QA
   name: gcr.io/cloud-builders/gcloud
   entrypoint: 'bash'
