@@ -21,6 +21,7 @@ steps:
     printf "\n\nView details in Cloud Build (permission required) https://console.cloud.google.com/cloud-build/builds/$BUILD_ID?project=$PROJECT_ID" | tee -a mergerequest-release-notes.md
 
     MERGE_REQUEST_IID=$$(friendly-cicd-helper gitlab-mergerequest --project $_GITLAB_PROJECT --source $_HEAD_BRANCH)
+    echo "$$MERGE_REQUEST_IID" > /workspace/gitlab_merge_request_iid
     cat mergerequest-release-notes.md | friendly-cicd-helper gitlab-comment --project $_GITLAB_PROJECT --mergerequest $$(cat /workspace/gitlab_merge_request_iid)
   secretEnv: ['GITLAB_TOKEN']
 
