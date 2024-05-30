@@ -69,7 +69,7 @@ options:
 
 availableSecrets:
   secretManager:
-  - versionName: projects/257885841248/secrets/cloudbuild-gitlab-1700567779965-api-access-token/versions/1
+  - versionName: projects/257885841248/secrets/friendly-cicd-helper_gitlab/versions/1
     env: 'GITLAB_TOKEN'
 
 substitutions:
